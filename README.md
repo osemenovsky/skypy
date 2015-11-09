@@ -31,3 +31,6 @@ You only need the part between "/conversations/" and "/messages"
 So if the url looks like `https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/8:foobar/messages`
 
 your chatname will be `8:foobar`
+
+## Legal
+Skype is the trademark of Skype Limited
