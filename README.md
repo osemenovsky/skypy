@@ -32,7 +32,7 @@ So if the url looks like `https://client-s.gateway.messenger.live.com/v1/users/M
 
 your chatname will be `8:foobar`
 ## Thanks
-Thanks Eion Robb for his skypeweb pidgin plugin (https://github.com/EionRobb/skype4pidgin), which serves me as a reference
+Eion Robb for his skypeweb pidgin plugin (https://github.com/EionRobb/skype4pidgin), which serves me as a reference
 
 ## Legal
 Skype is the trademark of Skype Limited
