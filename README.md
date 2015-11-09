@@ -31,6 +31,8 @@ You only need the part between "/conversations/" and "/messages"
 So if the url looks like `https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/8:foobar/messages`
 
 your chatname will be `8:foobar`
+## Thanks
+Thanks Eion Robb for his skypeweb pidgin plugin (https://github.com/EionRobb/skype4pidgin), which serves me as a reference
 
 ## Legal
 Skype is the trademark of Skype Limited
