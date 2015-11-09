@@ -11,15 +11,13 @@ Since this library is a single file and currently in the development there's no 
 ## Usage
 
 Example:
-`from skypy import Skype`
-
-`client = Skype("username", "password")`
-
-`client.authenticate()`
-
-`client.get_registration_token()`
-
-`client.send_message("8:some_user", "Hello, world")`
+```
+from skypy import Skype
+client = Skype("username", "password")
+client.authenticate()
+client.get_registration_token()
+client.send_message("8:some_user", "Hello, world")
+```
 
 Currently supported features are  authentication and messaging. There is no way to list contacts and chats yet, though i'm working on it.
 
