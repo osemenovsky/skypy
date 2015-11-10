@@ -99,6 +99,11 @@ class Skype():
           "Away": "AWAY",
           "Hidden": "INVISIBLE"
         }
+        self.initial = self.session.get(
+                "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
+                self.urls["login"]))
+
+        self.parser.feed(self.initial.content.decode("cp1251")) # Parsing input fields
         self.registration_token = {}
 
     def is_authenticated(self):
