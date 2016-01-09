@@ -50,19 +50,19 @@ class InputParser(HTMLParser):
         """
         Returns a dictionary of inputs
         """
-        return (self.inputs)
+        return self.inputs
 
     def get_attribute(self, tag, attribute):
         """
         Returns given attribute for given input field
         """
-        return (self.inputs[tag][attribute])
+        return self.inputs[tag][attribute]
 
     def get_value(self, tag):
         """
         Returns a value attribute of given input field
         """
-        return (self.inputs[tag]["value"])
+        return self.inputs[tag]["value"]
 
 
 class Skype():
@@ -120,10 +120,7 @@ class Skype():
 
         self.parser.feed(self.initial.content.decode("cp1251"))  # Parsing input fields
 
-        if not "skypetoken" in self.parser.get_inputs():
-            return (False)
-        else:
-            return (True)
+        return "skypetoken" in self.parser.get_inputs()
 
     def authenticate(self):
         """
@@ -154,8 +151,7 @@ class Skype():
         auth_response = self.session.post("https://login.skype.com/login",
                                           params=post_payload,
                                           data=self.creds,
-                                          headers=auth_headers,
-                                          )
+                                          headers=auth_headers)
 
         self.parser.feed(auth_response.content.decode("cp1251"))
 
@@ -163,10 +159,10 @@ class Skype():
         # TODO: Add more error checks if needed
         if not "skypetoken" in self.parser.get_inputs():
             raise Exception("Captcha required. Try logging into web.skype.com and try again.")
-
         else:
             self.skypetoken = self.parser.get_value("skypetoken")
-            return (self.skypetoken)
+
+            return self.skypetoken
 
     def get_registration_token(self):
         """
@@ -202,6 +198,7 @@ class Skype():
         # Creating a string containing current time and app_name
         # And padding it with zeroes to the length that's a multiple of 8
         new_string = time_value.encode("ascii") + app_name
+
         if len(new_string) % 8:
             new_string += (b"0" * (8 - (len(new_string) % 8)))
 
@@ -338,4 +335,4 @@ class Skype():
                                      headers=headers,
                                      data=json.dumps(data, sort_keys=True, separators=(",", ":")))
 
-        return (response)
+        return response
