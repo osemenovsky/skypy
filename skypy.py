@@ -2,17 +2,17 @@
 
 # Copyright (C) 2015  Semenovsky, Oleg <o.semenovsky@gmail.com>
 # Author: Semenovsky, Oleg <o.semenovsky@gmail.com>
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -22,6 +22,7 @@ import json
 import hashlib
 from html.parser import HTMLParser
 
+
 # TODO: refactor this
 # TODO: find out which other features to implement
 # TODO: check if everything works okay
@@ -30,6 +31,7 @@ class InputParser(HTMLParser):
     """
     HTML parser to get all the input fields values
     """
+
     def __init__(self):
         super().__init__()
         self.inputs = {}
@@ -48,19 +50,19 @@ class InputParser(HTMLParser):
         """
         Returns a dictionary of inputs
         """
-        return(self.inputs)
+        return self.inputs
 
     def get_attribute(self, tag, attribute):
         """
         Returns given attribute for given input field
         """
-        return(self.inputs[tag][attribute])
+        return self.inputs[tag][attribute]
 
     def get_value(self, tag):
         """
         Returns a value attribute of given input field
         """
-        return(self.inputs[tag]["value"])
+        return self.inputs[tag]["value"]
 
 
 class Skype():
@@ -68,6 +70,7 @@ class Skype():
     Skype connection object.
     Allows to authenticate login.skype.com, and send messages (by now)
     """
+
     def __init__(self, username, password):
         """
         Some data shared between functions
@@ -76,8 +79,7 @@ class Skype():
             "contacts": "api.skype.com",
             "new_contacts": "contacts.skype.com",
             "login": "login.skype.com",
-            "messages_old?": "client-s.gateway.messenger.live.com",
-            "messages": "bn2-client-s.gateway.messenger.live.com",
+            "messages": "client-s.gateway.messenger.live.com",
         }
         self.session = requests.session()
         self.creds = {"username": username, "password": password}
@@ -87,23 +89,25 @@ class Skype():
         self.lock_and_key_response = ""
         self.k_lock_and_key_appid = "msmsgs@msnmsgr.com"
         self.k_lock_and_key_secret = "Q1P7W2E4J9R8U3S5"
-        self.k_client_info = "os=Windows; osVer=8.1; proc=Win32; lcid=en-us; deviceType=1; country=n/a; clientName=swx-skype.com; clientVer=908/1.0.0.20"
+        self.k_client_info = "os=Linux; osVer=U; proc=Linux x86_64; lcid=en-us; " \
+                             "deviceType=1; country=n/a; clientName=skype.com; " \
+                             "clientVer=908/1.22.0.117//skype.com"
         self.k_login_host = "login.skype.com"
         self.k_contacts_host = "api.skype.com"
         self.k_contacts_host = "client-s.gateway.messenger.live.com"
 
         self.k_status_map = {
-          "Online": "AVAILABLE",
-          "Offline": "OFFLINE",
-          "Idle": "IDLE",
-          "Away": "AWAY",
-          "Hidden": "INVISIBLE"
+            "Online": "AVAILABLE",
+            "Offline": "OFFLINE",
+            "Idle": "IDLE",
+            "Away": "AWAY",
+            "Hidden": "INVISIBLE"
         }
         self.initial = self.session.get(
-                "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
+            "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
                 self.urls["login"]))
 
-        self.parser.feed(self.initial.content.decode("cp1251")) # Parsing input fields
+        self.parser.feed(self.initial.content.decode("cp1251"))  # Parsing input fields
         self.registration_token = {}
 
     def is_authenticated(self):
@@ -111,16 +115,12 @@ class Skype():
         Check for authentication and return True if authentication is successful
         """
         self.initial = self.session.get(
-                "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
+            "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
                 self.urls["login"]))
 
-        self.parser.feed(self.initial.content.decode("cp1251")) # Parsing input fields
+        self.parser.feed(self.initial.content.decode("cp1251"))  # Parsing input fields
 
-        if not "skypetoken" in self.parser.get_inputs():
-            return(False)
-        else:
-            return(True)
-
+        return "skypetoken" in self.parser.get_inputs()
 
     def authenticate(self):
         """
@@ -149,10 +149,9 @@ class Skype():
             "redirect_uri": "https://web.skype.com"
         }
         auth_response = self.session.post("https://login.skype.com/login",
-            params=post_payload,
-            data=self.creds,
-            headers=auth_headers,
-        )
+                                          params=post_payload,
+                                          data=self.creds,
+                                          headers=auth_headers)
 
         self.parser.feed(auth_response.content.decode("cp1251"))
 
@@ -160,29 +159,22 @@ class Skype():
         # TODO: Add more error checks if needed
         if not "skypetoken" in self.parser.get_inputs():
             raise Exception("Captcha required. Try logging into web.skype.com and try again.")
-
         else:
             self.skypetoken = self.parser.get_value("skypetoken")
-            return(self.skypetoken)
 
+            return self.skypetoken
 
     def get_registration_token(self):
         """
         Get a registrationToken, which is needed to send messages
         """
 
-        # Thanks EionRobb for this his skypeweb pidgin plugin, 
-        # and thanks to commcentral's skype protocol implementation, 
+        # Thanks EionRobb for this his skypeweb pidgin plugin,
+        # and thanks to commcentral's skype protocol implementation,
         # They have been a good reference
 
         if not self.skypetoken:
             raise Exception("Need to authenticate first")
-
-        url = "https://{}/v1/users/ME/endpoints".format(self.urls["messages"])
-        headers = {
-            "Origin": "https://web.skype.com",
-            "skypetoken": "skypetoken={}".format(self.skypetoken)
-        }
 
         # Generation magic sha256 hash
         # TODO: Describe the hash generation mechanism
@@ -206,6 +198,7 @@ class Skype():
         # Creating a string containing current time and app_name
         # And padding it with zeroes to the length that's a multiple of 8
         new_string = time_value.encode("ascii") + app_name
+
         if len(new_string) % 8:
             new_string += (b"0" * (8 - (len(new_string) % 8)))
 
@@ -215,10 +208,10 @@ class Skype():
 
         # Dividing digest to four parts and converting them to integers
         for i in range(4):
-            c = int(len(sha_256_hash)/4)
+            c = int(len(sha_256_hash) / 4)
             # Appending initial integer to sha_256_parts list
             sha_256_parts.append(int.from_bytes(
-                sha_256_hash[c*i:c*i+c], byteorder='little', signed=False
+                sha_256_hash[c * i:c * i + c], byteorder='little', signed=False
             ))
             # Appending initial integer to new_hash_parts list
             new_hash_parts.append(sha_256_parts[i])
@@ -229,7 +222,7 @@ class Skype():
         n_high = 0
         n_low = 0
 
-        for i in range(0, int(len(new_string)/4), 2):
+        for i in range(0, int(len(new_string) / 4), 2):
             # Here be magic
             # Getting two values by slicing a string, created earlier
             # and converting them to integers
@@ -273,28 +266,35 @@ class Skype():
 
         # Making a request with generated lockAndKeyResponse value to get registrationToken
         headers = {
+            "Origin": "https://web.skype.com",
             "Connection": "close",
-            "BehaviourOverride": "redirectAs404",
+            "BehaviorOverride": "redirectAs404",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/47.0.2526.106 Safari/537.36",
             "LockAndKey": "appid={}; time={}; lockAndKeyResponse={}".format(
                 self.k_lock_and_key_appid,
                 time_value,
                 self.lock_and_key_response
             ),
             "ClientInfo": self.k_client_info,
-            "Host": self.urls["messages_old?"],
+            "Host": self.urls["messages"],
             "Content-Type": "application/json",
             "Authentication": "skypetoken={}".format(self.skypetoken),
+            "Referer": "https://web.skype.com/ru/",
+            "Accept": "application/json",
         }
 
-        response = self.session.post(url, headers=headers, json={})
+        url = "https://{}/v1/users/ME/endpoints".format(self.urls["messages"])
+
+        response = self.session.post(url, headers=headers, data="{}")
 
         # Parsing a registrationToken from response
         registration_token_raw = response.headers["set-registrationtoken"]
         for line in registration_token_raw.split("; "):
-            k, v = line.split("=")
+            k, v = line.split("=", 1)
             self.registration_token[k] = v
 
-        return(self.registration_token["registrationToken"])
+        return self.registration_token["registrationToken"]
 
     def send_message(self, chat, message):
         """
@@ -331,6 +331,8 @@ class Skype():
             data["skypeemoteoffset"] = "4"
 
         # Making a request to generated url and trying to send a message
-        response = self.session.post(request_url, headers=headers, json=data)
+        response = self.session.post(request_url,
+                                     headers=headers,
+                                     data=json.dumps(data, sort_keys=True, separators=(",", ":")))
 
-        return(response)
+        return response
