@@ -107,7 +107,7 @@ class Skype():
             "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
                 self.urls["login"]))
 
-        self.parser.feed(self.initial.content.decode("cp1251"))  # Parsing input fields
+        self.parser.feed(self.initial.content.decode("utf-8"))  # Parsing input fields
         self.registration_token = {}
 
     def is_authenticated(self):
@@ -118,7 +118,7 @@ class Skype():
             "https://{}/login?method=skype&client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com".format(
                 self.urls["login"]))
 
-        self.parser.feed(self.initial.content.decode("cp1251"))  # Parsing input fields
+        self.parser.feed(self.initial.content.decode("utf-8"))  # Parsing input fields
 
         return "skypetoken" in self.parser.get_inputs()
 
@@ -153,7 +153,7 @@ class Skype():
                                           data=self.creds,
                                           headers=auth_headers)
 
-        self.parser.feed(auth_response.content.decode("cp1251"))
+        self.parser.feed(auth_response.content.decode("utf-8"))
 
         # Looks for skypetoken and if none found - assumes captcha
         # TODO: Add more error checks if needed
